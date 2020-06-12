@@ -12,6 +12,17 @@ namespace ContosoUniversity.Pages.Students
 {
     public class IndexModel : PageModel
     {
+        // GOALS:
+        // - Capture process of converting current non tested logic, to testable logic
+        // - Demostrate benefits of code coverage and unit testing
+        // - Demonstate in memory db
+
+        // TODO:
+        // - Capture use cases in OnGetAsync
+        // - Write e2e test (to be run before and after modification to prove success of refactor)
+        // - Illustate units of work within OnGetAsync (comment/region areas)
+        // - Rewrite OnGetAsync with TDD
+
         private readonly SchoolContext _context;
 
         public IndexModel(SchoolContext context)
