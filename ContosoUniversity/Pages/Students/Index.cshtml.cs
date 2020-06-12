@@ -37,30 +37,48 @@ namespace ContosoUniversity.Pages.Students
 
         public PaginatedList<Student> Students { get; set; }
 
+        // Use case: Sort student list in acending last name order (default)
+        // Use case: Sort student list in descending last name order
+        // Use case: Sort student list in acending enrollment date order
+        // Use case: Sort student list in descending enrollment date order
+        // Use case: Filter student list where name OR last name contains search string
+        // Use case: Display maximum of 3 students per page
+
         public async Task OnGetAsync(string sortOrder,
             string currentFilter, string searchString, int? pageIndex)
         {
+            // Set local property to user provide sort order
             CurrentSort = sortOrder;
+
+            // Configure default name and date column sort
             NameSort = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             DateSort = sortOrder == "Date" ? "date_desc" : "Date";
+
+            // If user provides search string, set page index to 1
             if (searchString != null)
             {
                 pageIndex = 1;
             }
+            // If no search string is provided, set text box to current filter
             else
             {
                 searchString = currentFilter;
             }
 
+            // Set current filter to value of the search string text box
             CurrentFilter = searchString;
 
-            IQueryable<Student> studentsIQ = from s in _context.Students
-                                            select s;
+            // Get all students in Students table
+            IQueryable<Student> studentsIQ = from s in _context.Students select s;
+
+            // Filters students list based on provide search string (name and last name is compared)
             if (!String.IsNullOrEmpty(searchString))
             {
                 studentsIQ = studentsIQ.Where(s => s.LastName.Contains(searchString)
                                        || s.FirstMidName.Contains(searchString));
             }
+
+            // Order students list based on provide order (defaults to last name ordering if non provided)
             switch (sortOrder)
             {
                 case "name_desc":
@@ -77,7 +95,10 @@ namespace ContosoUniversity.Pages.Students
                     break;
             }
 
+            // Set max page size
             int pageSize = 3;
+
+            // Set local property with paged students list
             Students = await PaginatedList<Student>.CreateAsync(
                 studentsIQ.AsNoTracking(), pageIndex ?? 1, pageSize);
         }
